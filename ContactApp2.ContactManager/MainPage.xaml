@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ContactApp2.Core.ViewModels;assembly=ContactApp2.Core"
+             xmlns:models="clr-namespace:ContactApp2.Data.Models;assembly=ContactApp2.Data"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="viewmodels:MainViewModel"
+             Title="Contacts"
+             x:Class="ContactApp2.ContactManager.MainPage">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding LoadCommand}"/>
+    </ContentPage.Behaviors>
+    
+    
+    
+    <Grid RowDefinitions="Auto,*, Auto">
+
+        <Grid ColumnDefinitions="2*, *" RowDefinitions="Auto,Auto">
+            <Label Margin="10,0,0,0" FontSize="24" Text="Ausgewählt"/>
+            <Label Grid.Row="1" Margin="10,0,0,0" FontSize="24" Text="Name"/>
+            
+            <Image HeightRequest="20"  Grid.Column="1" Source="phone.png"/>
+        </Grid>
+
+        <CollectionView Grid.Row="1" Margin="10" ItemsSource="{Binding Contacts}">
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate x:DataType="models:Contact">
+                <Grid ColumnDefinitions="2*,*" RowDefinitions="Auto,Auto">
+
+                        <Label FontAttributes="Bold"
+                               Text="{Binding Firstname}"/>
+
+                        <Label Grid.Row="1" 
+                               Text="{Binding Lastname}"/>
+
+                        <Label Grid.Column="1" Grid.RowSpan="2"
+                               Text="{Binding Phone}"/>
+
+                        
+                    </Grid>
+                    </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <Button Grid.Row="2" Text="Load"
+            Command="{Binding LoadCommand}"/>
+        
+        
+    </Grid>
+
+</ContentPage>
