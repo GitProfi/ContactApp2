@@ -13,43 +13,90 @@
                 EventName="Appearing"
                 Command="{Binding LoadCommand}"/>
     </ContentPage.Behaviors>
-    
-    
-    
-    <Grid RowDefinitions="Auto,*, Auto">
 
-        <Grid ColumnDefinitions="2*, *" RowDefinitions="Auto,Auto">
-            <Label Margin="10,0,0,0" FontSize="24" Text="Ausgewählt"/>
-            <Label Grid.Row="1" Margin="10,0,0,0" FontSize="24" Text="Name"/>
-            
-            <Image HeightRequest="20"  Grid.Column="1" Source="phone.png"/>
-        </Grid>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:BoolToObjectConverter x:Key="ShowPanelConverter" 
+                TrueObject="1" 
+                FalseObject="2"/>
+            <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-        <CollectionView Grid.Row="1" Margin="10" ItemsSource="{Binding Contacts}">
-            <CollectionView.ItemTemplate>
 
-                <DataTemplate x:DataType="models:Contact">
-                <Grid ColumnDefinitions="2*,*" RowDefinitions="Auto,Auto">
+    <Grid ColumnDefinitions="2*, *">
+        <!--Collumn 0-->
+        <Grid RowDefinitions="Auto,*, Auto" Grid.ColumnSpan="{Binding ShowDetails, Converter={StaticResource ShowPanelConverter}}">
 
-                        <Label FontAttributes="Bold"
+            <Grid ColumnDefinitions="2*, *" RowDefinitions="Auto,Auto">
+                <Label Margin="10,0,0,0" FontSize="14" Text="{Binding SelectedContact.Phone, StringFormat='Ausgewählt: {0}', FallbackValue='-'}"/>
+                <Label Grid.Row="1" Margin="10,0,0,0" FontSize="24" Text="Name"/>
+
+                <Image HeightRequest="20" Grid.Column="1" Source="phone.png" BackgroundColor="LightBlue">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}  ,Path=ToggleCommand}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </Grid>
+
+            <CollectionView SelectionMode="Single" SelectedItem="{Binding SelectedContact}" Grid.Row="1" Margin="10" ItemsSource="{Binding Contacts}">
+                <CollectionView.ItemTemplate>
+
+                    <DataTemplate x:DataType="models:Contact">
+                        <Grid ColumnDefinitions="2*,*,Auto" RowDefinitions="Auto,Auto">
+
+                            <Label FontAttributes="Bold"
                                Text="{Binding Firstname}"/>
 
-                        <Label Grid.Row="1" 
+                            <Label Grid.Row="1" 
                                Text="{Binding Lastname}"/>
 
-                        <Label Grid.Column="1" Grid.RowSpan="2"
+                            <Label Grid.Column="1" Grid.RowSpan="2"
                                Text="{Binding Phone}"/>
+                            
+                            <!--DELETE-->
 
-                        
-                    </Grid>
+                            <Image Grid.Column="3" HeightRequest="20" Source="trash.png" BackgroundColor="Red">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}  ,Path=ToggleCommand}"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+
+
+                        </Grid>
                     </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        
-        <Button Grid.Row="2" Text="Load"
-            Command="{Binding LoadCommand}"/>
-        
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Grid.Row="2" Text="Toggle"
+            Command="{Binding ToggleCommand}"/>
+
+
+        </Grid>
+
+        <!--collumn 1-->
+        <Grid IsVisible="{Binding ShowDetails}" Grid.Column="1" BackgroundColor="{StaticResource Gray500}">
+            <StackLayout>
+
+                <Label Margin="10" FontSize="Large" Text="Kontaktdetails"/>
+
+
+                <StackLayout Margin="10">
+                    <Label>
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}Name: {0} {1}">
+                                <Binding Path="SelectedContact.Firstname" FallbackValue="-"/>
+                                <Binding Path="SelectedContact.Lastname" FallbackValue="-"/>
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                </StackLayout>
+                
+                
+                <Label Text="{Binding SelectedContact.Phone, StringFormat='Telefonnummer: {0}', FallbackValue='-'}"/>
+                <Label IsVisible="{Binding SelectedContact.Email, StringFormat='E-Mail: {0}', FallbackValue='-', Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
+            </StackLayout>
+        </Grid>
         
     </Grid>
-
 </ContentPage>

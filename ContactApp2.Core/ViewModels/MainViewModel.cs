@@ -18,6 +18,29 @@ public partial class MainViewModel : ObservableObject
     IRepository _repository;
     private bool IsLoaded = false;
 
+    [ObservableProperty]
+    private Contact? _selectedContact = null;
+
+    partial void OnSelectedContactChanged(Contact? value)
+    {
+        this.ShowDetails = true;
+    }
+
+    [ObservableProperty]
+    private bool _showDetails = false;
+
+    [RelayCommand]
+    void Toggle()
+    {
+        this.ShowDetails = !this.ShowDetails;
+    }
+
+    [RelayCommand]
+    void Delete()
+    {
+
+    }
+
     public MainViewModel(IRepository repository)
     {
         _repository = repository;
